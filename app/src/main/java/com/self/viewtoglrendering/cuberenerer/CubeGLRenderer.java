@@ -33,10 +33,14 @@ public class CubeGLRenderer extends ViewToGLRenderer {
      */
     private float[] mViewMatrix = new float[16];
 
-    /** Store the projection matrix. This is used to project the scene onto a 2D viewport. */
+    /**
+     * Store the projection matrix. This is used to project the scene onto a 2D viewport.
+     */
     private float[] mProjectionMatrix = new float[16];
 
-    /** Allocate storage for the final combined matrix. This will be passed into the shader program. */
+    /**
+     * Allocate storage for the final combined matrix. This will be passed into the shader program.
+     */
     private float[] mMVPMatrix = new float[16];
 
     /**
@@ -44,71 +48,110 @@ public class CubeGLRenderer extends ViewToGLRenderer {
      */
     private float[] mLightModelMatrix = new float[16];
 
-    /** Store our model data in a float buffer. */
+    /**
+     * Store our model data in a float buffer.
+     */
     private final FloatBuffer mCubePositions;
     private final FloatBuffer mCubeColors;
     private final FloatBuffer mCubeNormals;
     private final FloatBuffer mCubeTextureCoordinates;
 
-    /** This will be used to pass in the transformation matrix. */
+    /**
+     * This will be used to pass in the transformation matrix.
+     */
     private int mMVPMatrixHandle;
 
-    /** This will be used to pass in the modelview matrix. */
+    /**
+     * This will be used to pass in the modelview matrix.
+     */
     private int mMVMatrixHandle;
 
-    /** This will be used to pass in the light position. */
+    /**
+     * This will be used to pass in the light position.
+     */
     private int mLightPosHandle;
 
-    /** This will be used to pass in the texture. */
+    /**
+     * This will be used to pass in the texture.
+     */
     private int mTextureUniformHandle;
 
-    /** This will be used to pass in model position information. */
+    /**
+     * This will be used to pass in model position information.
+     */
     private int mPositionHandle;
 
-    /** This will be used to pass in model color information. */
+    /**
+     * This will be used to pass in model color information.
+     */
     private int mColorHandle;
 
-    /** This will be used to pass in model normal information. */
+    /**
+     * This will be used to pass in model normal information.
+     */
     private int mNormalHandle;
 
-    /** This will be used to pass in model texture coordinate information. */
+    /**
+     * This will be used to pass in model texture coordinate information.
+     */
     private int mTextureCoordinateHandle;
 
-    /** How many bytes per float. */
+    /**
+     * How many bytes per float.
+     */
     private final int mBytesPerFloat = 4;
 
-    /** Size of the position data in elements. */
+    /**
+     * Size of the position data in elements.
+     */
     private final int mPositionDataSize = 3;
 
-    /** Size of the color data in elements. */
+    /**
+     * Size of the color data in elements.
+     */
     private final int mColorDataSize = 4;
 
-    /** Size of the normal data in elements. */
+    /**
+     * Size of the normal data in elements.
+     */
     private final int mNormalDataSize = 3;
 
-    /** Size of the texture coordinate data in elements. */
+    /**
+     * Size of the texture coordinate data in elements.
+     */
     private final int mTextureCoordinateDataSize = 2;
 
-    /** Used to hold a light centered on the origin in model space. We need a 4th coordinate so we can get translations to work when
-     *  we multiply this by our transformation matrices. */
-    private final float[] mLightPosInModelSpace = new float[] {0.0f, 0.0f, 0.0f, 1.0f};
+    /**
+     * Used to hold a light centered on the origin in model space. We need a 4th coordinate so we can get translations to work when
+     * we multiply this by our transformation matrices.
+     */
+    private final float[] mLightPosInModelSpace = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
 
-    /** Used to hold the current position of the light in world space (after transformation via model matrix). */
+    /**
+     * Used to hold the current position of the light in world space (after transformation via model matrix).
+     */
     private final float[] mLightPosInWorldSpace = new float[4];
 
-    /** Used to hold the transformed position of the light in eye space (after transformation via modelview matrix) */
+    /**
+     * Used to hold the transformed position of the light in eye space (after transformation via modelview matrix)
+     */
     private final float[] mLightPosInEyeSpace = new float[4];
 
-    /** This is a handle to our cube shading program. */
+    /**
+     * This is a handle to our cube shading program.
+     */
     private int mProgramHandle;
 
-    /** This is a handle to our light point program. */
+    /**
+     * This is a handle to our light point program.
+     */
     private int mPointProgramHandle;
 
-    /** This is a handle to our texture data. */
+    /**
+     * This is a handle to our texture data.
+     */
 //    private int mTextureDataHandle;
     private Context mContext;
-
 
 
     public CubeGLRenderer(Context context) {
@@ -351,13 +394,11 @@ public class CubeGLRenderer extends ViewToGLRenderer {
 
     }
 
-    protected String getVertexShader()
-    {
+    protected String getVertexShader() {
         return RawResourceReader.readTextFileFromRawResource(mContext, R.raw.per_pixel_vertex_shader);
     }
 
-    protected String getFragmentShader()
-    {
+    protected String getFragmentShader() {
         return RawResourceReader.readTextFileFromRawResource(mContext, R.raw.per_pixel_fragment_shader);
     }
 
@@ -405,7 +446,7 @@ public class CubeGLRenderer extends ViewToGLRenderer {
         final int fragmentShaderHandle = ShaderHelper.compileShader(GLES20.GL_FRAGMENT_SHADER, fragmentShader);
 
         mProgramHandle = ShaderHelper.createAndLinkProgram(vertexShaderHandle, fragmentShaderHandle,
-                new String[] {"a_Position",  "a_Color", "a_Normal", "a_TexCoordinate"});
+                new String[]{"a_Position", "a_Color", "a_Normal", "a_TexCoordinate"});
 
         // Define a simple shader program for our point.
         final String pointVertexShader = RawResourceReader.readTextFileFromRawResource(mContext, R.raw.point_vertex_shader);
@@ -414,7 +455,7 @@ public class CubeGLRenderer extends ViewToGLRenderer {
         final int pointVertexShaderHandle = ShaderHelper.compileShader(GLES20.GL_VERTEX_SHADER, pointVertexShader);
         final int pointFragmentShaderHandle = ShaderHelper.compileShader(GLES20.GL_FRAGMENT_SHADER, pointFragmentShader);
         mPointProgramHandle = ShaderHelper.createAndLinkProgram(pointVertexShaderHandle, pointFragmentShaderHandle,
-                new String[] {"a_Position"});
+                new String[]{"a_Position"});
 
     }
 
@@ -424,7 +465,7 @@ public class CubeGLRenderer extends ViewToGLRenderer {
         GLES20.glViewport(0, 0, width, height);
 
         // Create a new perspective projection matrix. The height will stay the same
-        // while the width will vary as per aspect ratio.
+//         while the width will vary as per aspect ratio.
         final float ratio = (float) width / height;
         final float left = -ratio;
         final float right = ratio;
@@ -461,7 +502,7 @@ public class CubeGLRenderer extends ViewToGLRenderer {
         mTextureCoordinateHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_TexCoordinate");
 
 
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,  getGLSurfaceTexture());
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, getGLSurfaceTexture());
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glUniform1i(mTextureUniformHandle, 0);
 
@@ -497,14 +538,12 @@ public class CubeGLRenderer extends ViewToGLRenderer {
 
         // Draw a point to indicate the light.
         GLES20.glUseProgram(mPointProgramHandle);
-        drawLight();
     }
 
     /**
      * Draws a cube.
      */
-    private void drawCube()
-    {
+    private void drawCube() {
         // Pass in the position information
         mCubePositions.position(0);
         GLES20.glVertexAttribPointer(mPositionHandle, mPositionDataSize, GLES20.GL_FLOAT, false,
@@ -552,27 +591,6 @@ public class CubeGLRenderer extends ViewToGLRenderer {
 
         // Draw the cube.
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36);
-    }
-
-
-    private void drawLight()
-    {
-        final int pointMVPMatrixHandle = GLES20.glGetUniformLocation(mPointProgramHandle, "u_MVPMatrix");
-        final int pointPositionHandle = GLES20.glGetAttribLocation(mPointProgramHandle, "a_Position");
-
-        // Pass in the position.
-        GLES20.glVertexAttrib3f(pointPositionHandle, mLightPosInModelSpace[0], mLightPosInModelSpace[1], mLightPosInModelSpace[2]);
-
-        // Since we are not using a buffer object, disable vertex arrays for this attribute.
-        GLES20.glDisableVertexAttribArray(pointPositionHandle);
-
-        // Pass in the transformation matrix.
-        Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mLightModelMatrix, 0);
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
-        GLES20.glUniformMatrix4fv(pointMVPMatrixHandle, 1, false, mMVPMatrix, 0);
-
-        // Draw the point.
-        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
     }
 
 }
